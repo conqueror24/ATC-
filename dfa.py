@@ -32,18 +32,31 @@ def validate_string():
         messagebox.showerror("Error", f"Invalid input: {e}")
 
 def draw_graph():
-    G = nx.DiGraph()
+    G = nx.MultiDiGraph()  # Use MultiDiGraph to handle multiple edges between nodes
     transitions = entry_transitions.get().split(';')
+    
+    # Add edges (transitions) to the graph
     for t in transitions:
         src, symbol, dest = t.split(',')
         G.add_edge(src, dest, label=symbol)
 
-    pos = nx.spring_layout(G)
+    # Use a circular layout for better visibility
+    pos = nx.circular_layout(G)
+    
+    # Draw nodes and edges
+    nx.draw(
+        G, pos, with_labels=True, node_color='skyblue', node_size=2000, 
+        font_size=10, font_color='black', arrowsize=20
+    )
+    
+    # Draw edge labels (transitions)
     edge_labels = nx.get_edge_attributes(G, 'label')
-
-    nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=2000, font_size=10, font_color='black')
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='red')
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='red', font_size=8)
+    
+    # Display the graph
+    plt.title("DFSM Transition Diagram")
     plt.show()
+
 
 # GUI Layout
 root = tk.Tk()
